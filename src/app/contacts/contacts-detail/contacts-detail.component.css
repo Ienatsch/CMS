@@ -1,0 +1,15 @@
+.componentHeader {
+    background-color: #F8F8F8;
+    border: 2px solid #f1eded;
+    border-bottom: 0;
+    padding: 40px;
+}
+
+.componentBody {
+    border: 2px solid #f1eded;
+    padding: 10px;
+}
+
+#deleteButton {
+    margin-left: 5px;
+}

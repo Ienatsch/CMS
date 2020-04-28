@@ -1,0 +1,18 @@
+.componentHeader {
+    background-color: #F8F8F8;
+    border: 2px solid #f1eded;
+    border-bottom: 0;
+}
+
+.componentHeader h2 {
+    margin: 10px 0 10px 10px;
+}
+
+.componentHeader button {
+    margin-top: 10px;
+}
+
+.componentBody {
+    border: 2px solid #f1eded;
+    padding: 10px;
+}
