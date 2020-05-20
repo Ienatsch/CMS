@@ -1,12 +1,12 @@
 export class Document {
-    id: string;
+    documentId: string;
     name: string;
     description: string;
     url: string;
     children: [Document];
 
-    constructor(id: string, name: string, description: string, url: string, children: [Document]) {
-        this.id = id;
+    constructor(documentId: string, name: string, description: string, url: string, children: [Document]) {
+        this.documentId = documentId;
         this.name = name;
         this.description = description;
         this.url = url;

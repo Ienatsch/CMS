@@ -1,4 +1,6 @@
 import { Component, OnInit, Output } from '@angular/core';
+import { ContactService } from './contact.service';
+import { Contact } from './contact.model';
 
 @Component({
   selector: 'cms-contacts',
@@ -7,10 +9,15 @@ import { Component, OnInit, Output } from '@angular/core';
 })
 export class ContactsComponent implements OnInit {
   @Output() selectedContact;
-  
-  constructor() { }
+
+  constructor(private contactService: ContactService) {
+
+   }
 
   ngOnInit(): void {
+    this.contactService.contactSelectedEvent.subscribe((contact: Contact) => {
+      this.selectedContact = contact;
+    });
   }
 
 }
