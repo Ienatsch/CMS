@@ -2,8 +2,8 @@
     <div class="col-xs-12">
         <h2 class="pull-left">{{contact.name}}</h2>
         <img src="{{contact.imageUrl}}" alt="{{contact.name}}">
-        <button id="deleteButton" class="btn btn-danger pull-right">Delete</button>
-        <button id="editButton" class="btn btn-primary pull-right">Edit</button>
+        <a id="deleteButton" class="btn btn-danger pull-right" (click)="onDelete()">Delete</a>
+        <a routerLink="edit" id="editButton" class="btn btn-primary pull-right">Edit</a>
     </div>
 </div>
 <div class="row componentBody">
