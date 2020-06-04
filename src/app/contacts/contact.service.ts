@@ -1,6 +1,7 @@
 import { Injectable, EventEmitter, OnInit } from '@angular/core';
 import { Contact } from './contact.model';
 import { MOCKCONTACTS } from './MOCKCONTACTS';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -8,8 +9,10 @@ import { MOCKCONTACTS } from './MOCKCONTACTS';
 export class ContactService {
   contacts: Contact[] = []
   contactSelectedEvent = new EventEmitter<Contact>();
-  contactChangedEvent = new EventEmitter<Contact[]>();
-  
+  contactListChangedEvent = new Subject<Contact[]>();
+  maxDocumentId = 0;
+  contactsListClone: Contact[];
+
   constructor() {
     this.contacts = MOCKCONTACTS;
    }
@@ -22,17 +25,47 @@ export class ContactService {
      return this.contacts.find(x => x.contactId === contactId ? x : null);
    }
 
-   deleteContact(contact: Contact) {
-    if (contact === null) {
+   addContact(newContact: Contact): void {
+    if (!newContact || newContact == null) {
       return;
     }
 
-    const pos = this.contacts.indexOf(contact);
+    this.maxDocumentId++;
+    newContact.contactId = this.maxDocumentId.toString();
+    this.contacts.push(newContact);
+    this.contactsListClone = this.contacts.slice();
+
+    this.contactListChangedEvent.next(this.contactsListClone);
+  }
+
+  updateContact(originalContact: Contact, newContact: Contact) {
+    if (!newContact || newContact == null) {
+      return;
+    }
+
+    var pos = this.contacts.indexOf(originalContact);
+    if (pos < 0) {
+      return 0;
+    }
+
+    newContact.contactId = originalContact.contactId;
+    document[pos] = newContact;
+    this.contactsListClone = this.contacts.slice();
+    this.contactListChangedEvent.next(this.contactsListClone);
+  }
+
+  deleteContact(contact: Contact) {
+    if (!document || document == null) {
+      return;
+    }
+
+    var pos = this.contacts.indexOf(contact);
     if (pos < 0) {
       return;
     }
 
     this.contacts.splice(pos, 1);
-    this.contactChangedEvent.emit(this.contacts.slice());
-   }
+    this.contactsListClone = this.contacts.slice();
+    this.contactListChangedEvent.next(this.contactsListClone);
+  }
 }
