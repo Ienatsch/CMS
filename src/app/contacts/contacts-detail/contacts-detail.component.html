@@ -11,4 +11,11 @@
         <p><strong>Email: {{contact.email}}</strong></p>
         <p><strong>Phone: {{contact.phone}}</strong></p>
     </div>
+    <div *ngFor="let contact of contact.group">
+        <div class="col-xs-12">
+            <div>
+                <cms-contact-item class="col-sm-11" [contact]="contact"></cms-contact-item>
+              </div>
+        </div>
+    </div>
 </div>

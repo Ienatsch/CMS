@@ -1,21 +1,29 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { Document } from './document.model';
 import { MOCKDOCUMENTS } from './MOCKDOCUMENTS';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class DocumentsService {
+export class DocumentsService implements OnInit, OnDestroy {
   documents: Document[] = [];
   documentSelectedEvent = new EventEmitter<Document>();
   documentListChangedEvent = new Subject<Document[]>();
   maxDocumentId: number;
   documentsListClone: Document[];
+  subscription: Subscription;
+  
 
   constructor() {
     this.documents = MOCKDOCUMENTS;
     this.maxDocumentId = this.getMaxId();
+  }
+
+  ngOnInit() {
+    this.subscription = this.documentListChangedEvent.subscribe((documentsList: Document[]) => {
+      this.documents = documentsList;
+    });
   }
 
   getDocuments() {
@@ -63,7 +71,7 @@ export class DocumentsService {
     }
 
     newDocument.documentId = originalDocument.documentId;
-    document[pos] = newDocument;
+    this.documents[pos] = newDocument;
     this.documentsListClone = this.documents.slice();
     this.documentListChangedEvent.next(this.documentsListClone);
   }
@@ -81,6 +89,10 @@ export class DocumentsService {
     this.documents.splice(pos, 1);
     this.documentsListClone = this.documents.slice();
     this.documentListChangedEvent.next(this.documentsListClone);
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
 }

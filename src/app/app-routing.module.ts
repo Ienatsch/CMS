@@ -6,7 +6,7 @@ import { ContactsComponent } from './contacts/contacts.component';
 import { DocumentEditComponent } from './documents/document-edit/document-edit.component';
 import { DocumentDetailComponent } from './documents/document-detail/document-detail.component';
 import { ContactsDetailComponent } from './contacts/contacts-detail/contacts-detail.component';
-import { ContactEditComponent } from './contacts/contact-edit/contact-edit/contact-edit.component';
+import { ContactEditComponent } from './contacts/contact-edit/contact-edit.component';
 
 const app_Routes: Routes = [
   {path: "", redirectTo: "documents", pathMatch: "full"},

@@ -1,21 +1,42 @@
-import { Injectable, EventEmitter, OnInit } from '@angular/core';
+import { Injectable, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { Contact } from './contact.model';
 import { MOCKCONTACTS } from './MOCKCONTACTS';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ContactService {
+export class ContactService implements OnInit, OnDestroy {
   contacts: Contact[] = []
   contactSelectedEvent = new EventEmitter<Contact>();
   contactListChangedEvent = new Subject<Contact[]>();
-  maxDocumentId = 0;
+  maxContactId = 0;
   contactsListClone: Contact[];
+  subscription: Subscription;
 
   constructor() {
     this.contacts = MOCKCONTACTS;
+    this.maxContactId = this.getMaxId();
    }
+
+   ngOnInit() {
+     this.subscription = this.contactListChangedEvent.subscribe((contactsList: Contact[]) => {
+       this.contacts = contactsList;
+     })
+   }
+
+   getMaxId(): number {
+    var maxId = 0;
+
+    this.contacts.forEach(contact => {
+      var currentId = parseInt(contact.contactId);
+      if (currentId > maxId) {
+        maxId = currentId;
+      }
+    })
+
+    return maxId;
+  }
 
    getContacts(): Contact[] {
      return this.contacts.slice();
@@ -30,8 +51,8 @@ export class ContactService {
       return;
     }
 
-    this.maxDocumentId++;
-    newContact.contactId = this.maxDocumentId.toString();
+    this.maxContactId++;
+    newContact.contactId = this.maxContactId.toString();
     this.contacts.push(newContact);
     this.contactsListClone = this.contacts.slice();
 
@@ -49,7 +70,7 @@ export class ContactService {
     }
 
     newContact.contactId = originalContact.contactId;
-    document[pos] = newContact;
+    this.contacts[pos] = newContact;
     this.contactsListClone = this.contacts.slice();
     this.contactListChangedEvent.next(this.contactsListClone);
   }
@@ -67,5 +88,9 @@ export class ContactService {
     this.contacts.splice(pos, 1);
     this.contactsListClone = this.contacts.slice();
     this.contactListChangedEvent.next(this.contactsListClone);
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }
