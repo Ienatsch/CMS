@@ -23,6 +23,9 @@ export class DocumentDetailComponent implements OnInit {
       var id = params['id'];
       this.document = this.documentService.getDocument(id);
     })
+    if (this.documentService.documents.length < 1) {
+      this.router.navigateByUrl("documents");
+    }
   }
 
   onView() {

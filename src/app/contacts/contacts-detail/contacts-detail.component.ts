@@ -18,6 +18,9 @@ export class ContactsDetailComponent implements OnInit {
       var id = params['id'];
       this.contact = this.contactService.getContact(id);
     })
+    if (this.contactService.contacts.length < 1) {
+      this.router.navigateByUrl("contacts");
+    }
   }
 
   onDelete() {
