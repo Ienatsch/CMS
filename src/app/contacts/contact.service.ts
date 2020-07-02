@@ -1,6 +1,6 @@
 import { Injectable, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http'
 import { Contact } from './contact.model';
-import { MOCKCONTACTS } from './MOCKCONTACTS';
 import { Subject, Subscription } from 'rxjs';
 
 @Injectable({
@@ -14,8 +14,8 @@ export class ContactService implements OnInit, OnDestroy {
   contactsListClone: Contact[];
   subscription: Subscription;
 
-  constructor() {
-    this.contacts = MOCKCONTACTS;
+  constructor(private http: HttpClient) {
+    this.contacts = this.getContacts();
     this.maxContactId = this.getMaxId();
    }
 
@@ -39,8 +39,27 @@ export class ContactService implements OnInit, OnDestroy {
   }
 
    getContacts(): Contact[] {
-     return this.contacts.slice();
+    this.http.get("https://cms-project-616fa.firebaseio.com/contacts.json").subscribe((contacts: Contact[]) => {
+      this.contacts = contacts;
+      this.maxContactId = this.getMaxId()
+      this.contacts.sort();
+      this.contactListChangedEvent.next(this.contacts);
+      // error function
+      (error: any) => {
+      console.log(error);
+      } 
+    });
+    return this.contacts;
    }
+
+   storeContacts() {
+    let headers = new HttpHeaders();
+    headers.set('Content-Type', 'application/json')
+
+    this.http.put("https://cms-project-616fa.firebaseio.com/contacts.json", JSON.stringify(this.contacts), {headers: headers}).subscribe(() => {
+      this.contactListChangedEvent.next(this.contacts.slice());
+    });
+  }
 
    getContact(contactId: string): Contact {
      return this.contacts.find(x => x.contactId === contactId ? x : null);
@@ -55,8 +74,7 @@ export class ContactService implements OnInit, OnDestroy {
     newContact.contactId = this.maxContactId.toString();
     this.contacts.push(newContact);
     this.contactsListClone = this.contacts.slice();
-
-    this.contactListChangedEvent.next(this.contactsListClone);
+    this.storeContacts();
   }
 
   updateContact(originalContact: Contact, newContact: Contact) {
@@ -72,7 +90,7 @@ export class ContactService implements OnInit, OnDestroy {
     newContact.contactId = originalContact.contactId;
     this.contacts[pos] = newContact;
     this.contactsListClone = this.contacts.slice();
-    this.contactListChangedEvent.next(this.contactsListClone);
+    this.storeContacts();
   }
 
   deleteContact(contact: Contact) {
@@ -87,7 +105,7 @@ export class ContactService implements OnInit, OnDestroy {
 
     this.contacts.splice(pos, 1);
     this.contactsListClone = this.contacts.slice();
-    this.contactListChangedEvent.next(this.contactsListClone);
+    this.storeContacts();
   }
 
   ngOnDestroy() {
